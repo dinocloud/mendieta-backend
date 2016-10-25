@@ -1,0 +1,16 @@
+{
+  "model.ProvisionerType" : [{
+    "id" : 1,
+    "description" : "aws"
+  }],
+  "model.ProvisionerRequiredField" : [{
+    "id" : 1,
+    "description" : "Access Key",
+    "provisioner_type_id" : 1
+  },
+  {
+    "id" : 2,
+    "description" : "Secret Key",
+    "provisioner_type_id" : 1
+  }]
+}

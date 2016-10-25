@@ -1,22 +1,14 @@
-from database import db_session
 from flask import Flask, jsonify, request, render_template, abort, app, g
-from flask_sqlalchemy import SQLAlchemy
 from flask_classy import FlaskView
-from settings import DBSettings
 from model import *
 from schemas import *
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.exceptions import *
-#@app.appcontext_tearing_down
-#def shutdown_session(exception=None):
-#    db_session.remove()
+from database import db, create_app, init_base_data
 
 #Setup general objects
-app = Flask(__name__)
-app.config.from_object(DBSettings)
 auth = HTTPBasicAuth()
-db = SQLAlchemy()
-db.init_app(app)
+app = create_app()
 
 @auth.verify_password
 def verify_password(username, password):
@@ -35,6 +27,7 @@ def handle_error(e):
     if isinstance(e, HTTPException):
         code = e.code
     return jsonify(error=str(e)), code
+
 
 class TenantsView(FlaskView):
     route_base = "/tenants/"
@@ -141,5 +134,6 @@ UsersView.register(app, route_prefix=api_prefix)
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        init_base_data()
     app.run(port=5000, debug=True)
 
