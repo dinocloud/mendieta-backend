@@ -1,9 +1,13 @@
-from flask_sqlalchemy import SQLAlchemy
-from settings import DBSettings
-from flask import Flask
-import utils
 import json
 from collections import OrderedDict
+
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+import utils
+from utils.settings import DBSettings
+
+INIT_DATA_FILE = 'database/init_data.json'
 db = SQLAlchemy()
 
 
@@ -16,7 +20,7 @@ def create_app():
 
 
 def init_base_data():
-    with open('config.json', 'r') as file:
+    with open(INIT_DATA_FILE, 'r') as file:
         config = json.load(file, object_pairs_hook=OrderedDict)
     for class_name, list_objects in config.items():
         for list_attributes in list_objects:
