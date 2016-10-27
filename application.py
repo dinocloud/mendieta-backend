@@ -2,6 +2,7 @@ from flask import jsonify, request, render_template
 from database import db, create_app, init_base_data
 from views import *
 import os
+import model
 #Setup general objects
 application = create_app()
 
@@ -19,6 +20,7 @@ def handle_error(e):
 @application.route("/")
 def home():
     return "Hello World!"
+
 
 #Register views
 api_prefix = "/api/v1/"
