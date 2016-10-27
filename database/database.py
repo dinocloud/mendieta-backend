@@ -10,11 +10,11 @@ db = SQLAlchemy()
 
 
 def create_app():
-    app = Flask(__name__)
-    app.config.from_object(DBSettings)
+    application = Flask(__name__)
+    application.config.from_object(DBSettings)
     db = SQLAlchemy()
-    db.init_app(app)
-    return app
+    db.init_app(application)
+    return application
 
 
 def init_base_data():

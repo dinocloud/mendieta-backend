@@ -1,6 +1,6 @@
 import os
 class DBSettings:
-    DB_ENGINE = "mysql"
+    DB_ENGINE = "mysql+pymysql"
     DB_HOST = os.getenv("RDS_HOSTNAME","127.0.0.1")
     DB_NAME = os.getenv("RDS_DB_NAME","mendietatest")
     DB_PORT = os.getenv("RDS_PORT","3306")
