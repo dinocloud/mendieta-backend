@@ -5,6 +5,7 @@ from views import *
 import os
 #Setup general objects
 application = create_app()
+from model import *
 
 @application.errorhandler(404)
 @application.errorhandler(403)
@@ -16,6 +17,11 @@ def handle_error(e):
         code = e.code
     return jsonify(error=str(e)), code
 
+@application.route("/refreshdb")
+def refresh_db():
+    with application.app_context():
+        db.create_all()
+        init_base_data()
 
 @application.route("/")
 def home():
@@ -32,7 +38,6 @@ ProvisionerView.register(application, route_prefix=api_prefix)
 
 if __name__ == '__main__':
     with application.app_context():
-        from model import *
         db.create_all()
         init_base_data()
         application.run(port=int(os.getenv("APP_PORT", 5000)), debug=True)
