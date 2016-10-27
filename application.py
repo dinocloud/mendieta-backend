@@ -2,7 +2,7 @@ from flask import jsonify, request, render_template
 from database import db, create_app, init_base_data
 from views import *
 import os
-import model
+from model import *
 #Setup general objects
 application = create_app()
 
