@@ -2,7 +2,6 @@ from flask import jsonify, request, render_template
 from database import db, create_app, init_base_data
 from views import *
 import os
-from model import *
 #Setup general objects
 application = create_app()
 
@@ -28,8 +27,11 @@ TenantsView.register(application, route_prefix=api_prefix)
 UsersView.register(application, route_prefix=api_prefix)
 ProvisionerTypeView.register(application, route_prefix=api_prefix)
 ProvisionerView.register(application, route_prefix=api_prefix)
+
+
 if __name__ == '__main__':
     with application.app_context():
+        from model import *
         db.create_all()
         init_base_data()
         application.run(port=int(os.getenv("APP_PORT", 5000)), debug=True)
