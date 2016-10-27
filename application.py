@@ -1,5 +1,6 @@
 from flask import jsonify, request, render_template
 from database import db, create_app, init_base_data
+from utils import DBSettings
 from views import *
 import os
 #Setup general objects
@@ -18,7 +19,7 @@ def handle_error(e):
 
 @application.route("/")
 def home():
-    return "Hello World!"
+    return "Hello World!: URI: {0}".format(DBSettings.SQLALCHEMY_DATABASE_URI)
 
 
 #Register views
