@@ -8,7 +8,7 @@ class TenantSchema(Schema):
 
 class ProvisionerFieldSchema(Schema):
     id = fields.Integer()
-    key = fields.String()
+    name = fields.String()
     value = fields.String()
     tenant = fields.Nested(TenantSchema())
 

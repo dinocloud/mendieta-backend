@@ -1,5 +1,19 @@
-from database.database import db
+from database import db
 
+# "provisioner_type" : {
+#       "description": "aws",
+#       "id": 1,
+#       "provisioner_required_fields": [
+#         {
+#           "description": "Access Key",
+#           "id": 1
+#         },
+#         {
+#           "description": "Secret Key",
+#           "id": 2
+#         }
+#       ]
+#     },
 
 class Provisioner(db.Model):
     __tablename__ = 'provisioners'
@@ -8,13 +22,14 @@ class Provisioner(db.Model):
     tenant = db.relationship("Tenant", foreign_keys=[tenant_uuid])
     fancy_name = db.Column(db.String(20), unique=False, nullable=False)
     provisioner_type_id = db.Column(db.Integer, db.ForeignKey('provisioner_types.id'))
-    provisioner_type = db.relationship("ProvisionerType", foreign_keys=[provisioner_type_id])
-    provisioner_fields = db.relationship("ProvisionerField")
+    provisioner_type = db.relationship("ProvisionerType", foreign_keys=[provisioner_type_id], cascade="merge")
+    provisioner_fields = db.relationship("ProvisionerField", uselist=True, backref=db.backref('provisioner')) #, lazy='dynamic'
 
-    def __init__(self, fancy_name=None, tenant_uuid=None, provisioner_type_id=None):
+    def __init__(self, fancy_name=None, tenant_uuid=None, provisioner_type=None, provisioner_fields=None):
         self.tenant_uuid = tenant_uuid
         self.fancy_name = fancy_name
-        self.provisioner_type_id = provisioner_type_id
+        self.provisioner_type = provisioner_type
+        self.provisioner_fields = provisioner_fields
 
     def __repr__(self):
         return '<Provisioner {0}>'.format(self.fancy_name)
@@ -23,20 +38,20 @@ class Provisioner(db.Model):
 class ProvisionerField(db.Model):
     __tablename__ = "provisioner_fields"
     id = db.Column(db.Integer, primary_key=True)
-    key = db.Column(db.String(20), nullable=False)
+    name = db.Column(db.String(20), nullable=False)
     value = db.Column(db.String(120), nullable=False)
     provisioner_id = db.Column(db.Integer, db.ForeignKey('provisioners.id'))
     tenant_uuid = db.Column(db.String(20), db.ForeignKey('tenants.uuid'))
     tenant = db.relationship("Tenant", foreign_keys=[tenant_uuid])
 
-    def __init__(self, key=None, value=None, provisioner_id=None, tenant_uuid=None):
-        self.key = key
+    def __init__(self, name=None, value=None, provisioner_id=None, tenant_uuid=None):
+        self.name = name
         self.value = value
         self.provisioner_id = provisioner_id
         self.tenant_uuid = tenant_uuid
 
     def __repr__(self):
-        return '<Provisioner {0}, key: {1}, value: {2}>'.format(self.provisioner_id, self.key, self.value)
+        return '<Provisioner {0}, key: {1}, value: {2}>'.format(self.provisioner_id, self.name, self.value)
 
 
 class ProvisionerRequiredField(db.Model):
@@ -65,13 +80,14 @@ class ProvisionerType(db.Model):
     __tablename__ = 'provisioner_types'
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(10), unique=True, nullable=False)
-    provisioner_required_fields = db.relationship("ProvisionerRequiredField") #, backref="provisioner_required_fields"
+    provisioner_required_fields = db.relationship("ProvisionerRequiredField", uselist=True) #, backref="provisioner_required_fields"
 
-    def __init__(self):
-        pass
-
-    def __init__(self, description=None):
+    def __init__(self, id=None, description=None):
+        self.id = id
         self.description = description
+
+    #def __init__(self, description=None):
+     #   self.description = description
 
     def __repr__(self):
         return '<Provisioner type {0}>'.format(self.description)

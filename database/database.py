@@ -1,9 +1,7 @@
 import json
 from collections import OrderedDict
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
 import utils
 from utils.settings import DBSettings
 
@@ -34,4 +32,8 @@ def init_base_data():
                 db.session.merge(old_object)
             else:
                 db.session.add(object)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
