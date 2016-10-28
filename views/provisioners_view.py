@@ -4,7 +4,7 @@ from werkzeug.exceptions import *
 from database import db
 from model import *
 from schemas import *
-from authentication import auth
+from authentication import requires_auth
 
 
 class ProvisionerView(FlaskView):
@@ -13,20 +13,20 @@ class ProvisionerView(FlaskView):
     provisionerTypeSchema = ProvisionerTypeSchema()
     provisionerFieldSchema = ProvisionerFieldSchema()
 
-    @auth.login_required
+    @requires_auth
     def index(self):
         all_provisioners = Provisioner.query\
             .filter(Provisioner.tenant_uuid == request.headers.get("tenant_uuid", None))
         data = self.provisionerSchema.dump(all_provisioners, many=True).data
         return jsonify({"provisioners" : data})
 
-    @auth.login_required
+    @requires_auth
     def get(self, id):
         provisioner = Provisioner.query.get_or_404(int(id)).filter(Provisioner.tenant_uuid
                                                                    == request.headers.get("tenant_uuid", None))
         return jsonify(self.provisionerSchema.dump(provisioner).data)
 
-    @auth.login_required
+    @requires_auth
     def post(self):
         data = request.json
         headers = request.headers
@@ -54,7 +54,7 @@ class ProvisionerView(FlaskView):
             raise
         return jsonify(self.provisionerSchema.dump(provisioner).data), 201
 
-    @auth.login_required
+    @requires_auth
     def delete(self, id):
         provisioner = Provisioner.query.get_or_404(int(id))
         db.session.delete(provisioner)
@@ -65,7 +65,7 @@ class ProvisionerView(FlaskView):
             raise
         return jsonify({"message": "Successfully deleted item.", "id": provisioner.id}), 200
 
-    @auth.login_required
+    @requires_auth
     def put(self, id):
         provisioner = Provisioner.query.get_or_404(int(id))\
             .filter(Provisioner.tenant_uuid==request.headers.get("tenant_uuid", None))

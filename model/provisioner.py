@@ -1,29 +1,15 @@
 from database import db
 
-# "provisioner_type" : {
-#       "description": "aws",
-#       "id": 1,
-#       "provisioner_required_fields": [
-#         {
-#           "description": "Access Key",
-#           "id": 1
-#         },
-#         {
-#           "description": "Secret Key",
-#           "id": 2
-#         }
-#       ]
-#     },
-
 class Provisioner(db.Model):
     __tablename__ = 'provisioners'
     id = db.Column(db.Integer, primary_key=True)
     tenant_uuid = db.Column(db.String(20), db.ForeignKey('tenants.uuid'))
-    tenant = db.relationship("Tenant", foreign_keys=[tenant_uuid])
+    tenant = db.relationship("Tenant", foreign_keys=[tenant_uuid], cascade="merge")
     fancy_name = db.Column(db.String(20), unique=False, nullable=False)
     provisioner_type_id = db.Column(db.Integer, db.ForeignKey('provisioner_types.id'))
     provisioner_type = db.relationship("ProvisionerType", foreign_keys=[provisioner_type_id], cascade="merge")
-    provisioner_fields = db.relationship("ProvisionerField", uselist=True, backref=db.backref('provisioner')) #, lazy='dynamic'
+    provisioner_fields = db.relationship("ProvisionerField", uselist=True, backref=db.backref('provisioner'),
+                                         cascade="save-update, merge, delete") #, lazy='dynamic'
 
     def __init__(self, fancy_name=None, tenant_uuid=None, provisioner_type=None, provisioner_fields=None):
         self.tenant_uuid = tenant_uuid
@@ -42,7 +28,7 @@ class ProvisionerField(db.Model):
     value = db.Column(db.String(120), nullable=False)
     provisioner_id = db.Column(db.Integer, db.ForeignKey('provisioners.id'))
     tenant_uuid = db.Column(db.String(20), db.ForeignKey('tenants.uuid'))
-    tenant = db.relationship("Tenant", foreign_keys=[tenant_uuid])
+    tenant = db.relationship("Tenant", foreign_keys=[tenant_uuid], cascade="merge")
 
     def __init__(self, name=None, value=None, provisioner_id=None, tenant_uuid=None):
         self.name = name
@@ -60,14 +46,6 @@ class ProvisionerRequiredField(db.Model):
     description = db.Column(db.String(10), unique=True, nullable=False)
     provisioner_type_id = db.Column(db.Integer, db.ForeignKey('provisioner_types.id'))
 
-    def __init__(self):
-        pass
-
-    def __init__(self, id=None, description=None, provisioner_type_id=None):
-        self.id = id
-        self.description = description
-        self.provisioner_type_id = provisioner_type_id
-
     def __init__(self, description=None, provisioner_type_id=None):
         self.description = description
         self.provisioner_type_id = provisioner_type_id
@@ -80,7 +58,8 @@ class ProvisionerType(db.Model):
     __tablename__ = 'provisioner_types'
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(10), unique=True, nullable=False)
-    provisioner_required_fields = db.relationship("ProvisionerRequiredField", uselist=True) #, backref="provisioner_required_fields"
+    provisioner_required_fields = db.relationship("ProvisionerRequiredField",
+                                                  uselist=True, cascade="save-update, delete, merge") #, backref="provisioner_required_fields"
 
     def __init__(self, id=None, description=None):
         self.id = id

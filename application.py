@@ -4,6 +4,8 @@ from utils import DBSettings
 from views import *
 import os
 #Setup general objects
+#admin password: 21232f297a57a5a743894a0e4a801fc3 (admin in MD5)
+
 application = create_app()
 from model import *
 

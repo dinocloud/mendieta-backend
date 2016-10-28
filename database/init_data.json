@@ -1,4 +1,27 @@
 {
+  "model.UserRole" : [{
+   "id" : 1,
+   "description" : "admin"
+  },
+  {
+   "id" : 2,
+   "description" : "developer"
+  }],
+  "model.Tenant" : [{
+   "id" : 1,
+   "name" : "administration",
+   "uuid" : "2DAMFHXDDLY21WPXYLF9"
+  }],
+  "model.User" : [{
+   "id" : 1,
+   "username" : "admin",
+   "password" : "$6$rounds=690328$2VLEcX8p6xP.B7ga$ApMqTw..eLRWgSZiDXFQ82/Tsf5Ey/OGb684qqkQd5MHgC5QOiaw6SlHT1KBO.hN2qnGTWaTpAqpYlDj.WpyW.",
+   "name" : "administration",
+   "lastname" : "mendieta",
+   "email" : "franco.salonia@dinocloudconsulting.com",
+   "tenant_uuid" : "2DAMFHXDDLY21WPXYLF9",
+   "role_id" : 1
+  }],
   "model.ProvisionerType" : [{
     "id" : 1,
     "description" : "aws"

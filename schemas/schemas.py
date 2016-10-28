@@ -28,6 +28,10 @@ class ProvisionerSchema(Schema):
     provisioner_type = fields.Nested(ProvisionerTypeSchema())
     provisioner_fields = fields.List(fields.Nested(ProvisionerFieldSchema()))
 
+class UserRoleSchema(Schema):
+    id = fields.Integer()
+    description = fields.String()
+
 class UserSchema(Schema):
     id = fields.Integer()
     username = fields.String()
@@ -36,4 +40,5 @@ class UserSchema(Schema):
     name = fields.String()
     lastname = fields.String()
     tenant = fields.Nested(TenantSchema())
+    role = fields.Nested(UserRoleSchema())
 
